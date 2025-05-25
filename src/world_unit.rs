@@ -25,6 +25,7 @@ impl Ord for WorldUnit {
 }
 
 impl WorldUnit {
+  // TODO: make this configurable (global resource).
   const SCREEN_ASPECT_RATIO: f32 = 720. / 1280.;
 
   const UNITS_PER_SCREEN_WIDTH: f32 = 50.;
