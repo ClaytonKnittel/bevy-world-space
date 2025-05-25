@@ -5,7 +5,7 @@ use bevy::{
   input::{ButtonInput, keyboard::KeyCode},
 };
 use bevy::{
-  app::{App, Plugin, Startup, Update},
+  app::{App, Plugin, PreUpdate, Startup},
   core_pipeline::core_2d::Camera2d,
   ecs::{
     event::EventReader,
@@ -59,6 +59,6 @@ impl Plugin for WorldInitPlugin {
       .insert_resource(WinInfo::new(self.screen_width, self.screen_height))
       .insert_resource(AspectRatio::new(self.screen_height / self.screen_width))
       .add_systems(Startup, Self::world_init)
-      .add_systems(Update, (Self::app_exit_listener, Self::resize_listener));
+      .add_systems(PreUpdate, (Self::app_exit_listener, Self::resize_listener));
   }
 }
