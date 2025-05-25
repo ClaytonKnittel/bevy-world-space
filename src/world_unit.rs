@@ -116,6 +116,14 @@ impl Mul<f32> for WorldUnit {
   }
 }
 
+impl Mul<WorldUnit> for f32 {
+  type Output = WorldUnit;
+
+  fn mul(self, rhs: WorldUnit) -> WorldUnit {
+    WorldUnit(self * rhs.0)
+  }
+}
+
 impl Mul<Vec2> for WorldUnit {
   type Output = WorldVec2;
 
