@@ -228,10 +228,14 @@ impl WorldVec2 {
     }
   }
 
-  pub const fn from_screen_pos(pos: Vec2, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+  pub const fn from_window_screen_pos(
+    pos: Vec2,
+    win_info: &WinInfo,
+    aspect_ratio: &AspectRatio,
+  ) -> Self {
     Self {
-      x: WorldUnit::from_x(pos.x, &win_info, &aspect_ratio),
-      y: WorldUnit::from_y(pos.y, &win_info, &aspect_ratio),
+      x: WorldUnit::from_x(pos.x - win_info.width / 2., &win_info, &aspect_ratio),
+      y: WorldUnit::from_y(win_info.height / 2. - pos.y, &win_info, &aspect_ratio),
     }
   }
 

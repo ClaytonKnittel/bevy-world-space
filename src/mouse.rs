@@ -35,7 +35,7 @@ impl MousePlugin {
       return;
     };
 
-    let pos = WorldVec2::from_screen_pos(cursor_pos, &win_info, &aspect_ratio);
+    let pos = WorldVec2::from_window_screen_pos(cursor_pos, &win_info, &aspect_ratio);
     if buttons.just_pressed(MouseButton::Left) {
       mouse_events.send(MouseEvent::LeftClick(pos));
     }
