@@ -1,4 +1,7 @@
-use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use std::{
+  fmt::{Debug, Display},
+  ops::{Add, AddAssign, Div, Mul, Neg, Sub},
+};
 
 use bevy::{
   ecs::system::Resource,
@@ -33,6 +36,18 @@ impl Ord for WorldUnit {
     NotNan::new(self.0)
       .unwrap()
       .cmp(&NotNan::new(other.0).unwrap())
+  }
+}
+
+impl Display for WorldUnit {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}u", self.0)
+  }
+}
+
+impl Debug for WorldUnit {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{self}")
   }
 }
 
@@ -184,10 +199,16 @@ impl Neg for WorldUnit {
   }
 }
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct WorldVec2 {
   pub x: WorldUnit,
   pub y: WorldUnit,
+}
+
+impl Display for WorldVec2 {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "({}, {})", self.x, self.y)
+  }
 }
 
 impl WorldVec2 {
