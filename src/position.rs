@@ -10,7 +10,7 @@ use bevy::{
 
 use crate::{
   win_info::WinInfo,
-  world_unit::{WorldUnit, WorldVec2},
+  world_unit::{AspectRatio, WorldUnit, WorldVec2},
 };
 
 #[derive(Component, Default)]
@@ -43,16 +43,20 @@ impl Position {
 pub struct PositionPlugin;
 
 impl PositionPlugin {
-  fn sync_render_positions(win_info: Res<WinInfo>, mut query: Query<(&Position, &mut Transform)>) {
+  fn sync_render_positions(
+    win_info: Res<WinInfo>,
+    aspect_ratio: Res<AspectRatio>,
+    mut query: Query<(&Position, &mut Transform)>,
+  ) {
     for (Position { pos, scale, image_width, rotation, z_idx }, mut transform) in &mut query {
-      let pos = pos.to_absolute(&win_info);
+      let pos = pos.to_absolute(&win_info, &aspect_ratio);
       let image_width = *image_width as f32;
 
       transform.translation.x = pos.x;
       transform.translation.y = pos.y;
       transform.translation.z = *z_idx;
-      transform.scale.x = scale.to_x(&win_info) / image_width;
-      transform.scale.y = scale.to_y(&win_info) / image_width;
+      transform.scale.x = scale.to_x(&win_info, &aspect_ratio) / image_width;
+      transform.scale.y = scale.to_y(&win_info, &aspect_ratio) / image_width;
       transform.rotation = *rotation;
     }
   }

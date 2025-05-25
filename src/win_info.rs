@@ -6,8 +6,8 @@ pub struct WinInfo {
   pub height: f32,
 }
 
-impl Default for WinInfo {
-  fn default() -> Self {
-    Self { width: 1280., height: 720. }
+impl WinInfo {
+  pub fn new(width: f32, height: f32) -> Self {
+    WinInfo { width, height }
   }
 }

@@ -14,15 +14,22 @@ use bevy::{
   window::WindowResized,
 };
 
-use crate::win_info::WinInfo;
+use crate::{win_info::WinInfo, world_unit::AspectRatio};
 
-#[derive(Default)]
-pub struct WorldInitPlugin;
+pub struct WorldInitPlugin {
+  pub screen_width: f32,
+  pub screen_height: f32,
+}
+
+impl Default for WorldInitPlugin {
+  fn default() -> Self {
+    Self { screen_width: 1280., screen_height: 720. }
+  }
+}
 
 impl WorldInitPlugin {
   pub fn world_init(mut commands: Commands) {
     commands.spawn(Camera2d);
-    commands.init_resource::<WinInfo>();
   }
 
   #[cfg(not(target_arch = "wasm32"))]
@@ -49,6 +56,8 @@ impl WorldInitPlugin {
 impl Plugin for WorldInitPlugin {
   fn build(&self, app: &mut App) {
     app
+      .insert_resource(WinInfo::new(self.screen_width, self.screen_height))
+      .insert_resource(AspectRatio::new(self.screen_height / self.screen_width))
       .add_systems(Startup, Self::world_init)
       .add_systems(Update, (Self::app_exit_listener, Self::resize_listener));
   }

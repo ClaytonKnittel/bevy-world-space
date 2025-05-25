@@ -1,9 +1,21 @@
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
-use bevy::math::{Vec2, primitives::Rectangle};
+use bevy::{
+  ecs::system::Resource,
+  math::{Vec2, primitives::Rectangle},
+};
 use ordered_float::NotNan;
 
 use crate::win_info::WinInfo;
+
+#[derive(Resource)]
+pub struct AspectRatio(f32);
+
+impl AspectRatio {
+  pub fn new(aspect_ratio: f32) -> Self {
+    Self(aspect_ratio)
+  }
+}
 
 #[derive(Clone, Copy, Default, PartialEq)]
 pub struct WorldUnit(f32);
@@ -25,53 +37,68 @@ impl Ord for WorldUnit {
 }
 
 impl WorldUnit {
-  // TODO: make this configurable (global resource).
-  const SCREEN_ASPECT_RATIO: f32 = 720. / 1280.;
-
-  const UNITS_PER_SCREEN_WIDTH: f32 = 50.;
-  const UNITS_PER_SCREEN_HEIGHT: f32 = Self::UNITS_PER_SCREEN_WIDTH * Self::SCREEN_ASPECT_RATIO;
+  const UNITS_PER_SCREEN_MAX: f32 = 50.;
 
   pub const ZERO: Self = Self(0.);
   pub const ONE: Self = Self(1.);
 
-  pub const TOP: Self = Self::normalized_y(1.);
-  pub const BOTTOM: Self = Self::normalized_y(-1.);
-  pub const LEFT: Self = Self::normalized_x(-1.);
-  pub const RIGHT: Self = Self::normalized_x(1.);
-
-  pub const SCREEN_WIDTH: Self = Self(Self::UNITS_PER_SCREEN_WIDTH);
-
-  pub const fn new(units: f32) -> Self {
-    Self(units)
+  const fn units_per_screen_width(AspectRatio(aspect_ratio): &AspectRatio) -> f32 {
+    Self::UNITS_PER_SCREEN_MAX / aspect_ratio.max(1.)
   }
 
-  pub const fn normalized_x(x: f32) -> Self {
+  const fn units_per_screen_height(AspectRatio(aspect_ratio): &AspectRatio) -> f32 {
+    aspect_ratio.min(1.) * Self::UNITS_PER_SCREEN_MAX
+  }
+
+  pub const fn screen_width(aspect_ratio: &AspectRatio) -> Self {
+    Self(Self::units_per_screen_width(aspect_ratio))
+  }
+
+  pub const fn screen_height(aspect_ratio: &AspectRatio) -> Self {
+    Self(Self::units_per_screen_height(aspect_ratio))
+  }
+
+  pub const fn normalized_x(x: f32, aspect_ratio: &AspectRatio) -> Self {
     debug_assert!(-1. <= x && x <= 1.);
-    Self(x * Self::UNITS_PER_SCREEN_WIDTH / 2.)
+    Self(x * Self::units_per_screen_width(aspect_ratio) / 2.)
   }
 
-  pub const fn normalized_y(y: f32) -> Self {
+  pub const fn normalized_y(y: f32, aspect_ratio: &AspectRatio) -> Self {
     debug_assert!(-1. <= y && y <= 1.);
-    Self(y * Self::UNITS_PER_SCREEN_HEIGHT / 2.)
+    Self(y * Self::units_per_screen_height(aspect_ratio) / 2.)
   }
 
-  fn scale(win_info: &WinInfo) -> Vec2 {
-    let window_width = win_info
-      .width
-      .min(win_info.height / Self::SCREEN_ASPECT_RATIO);
-    let window_height = window_width * Self::SCREEN_ASPECT_RATIO;
+  pub const fn top(aspect_ratio: &AspectRatio) -> Self {
+    Self::normalized_y(1., aspect_ratio)
+  }
+
+  pub const fn bottom(aspect_ratio: &AspectRatio) -> Self {
+    Self::normalized_y(-1., aspect_ratio)
+  }
+
+  pub const fn left(aspect_ratio: &AspectRatio) -> Self {
+    Self::normalized_x(-1., aspect_ratio)
+  }
+
+  pub const fn right(aspect_ratio: &AspectRatio) -> Self {
+    Self::normalized_x(1., aspect_ratio)
+  }
+
+  const fn scale(win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Vec2 {
+    let window_width = win_info.width.min(win_info.height / aspect_ratio.0);
+    let window_height = window_width * aspect_ratio.0;
     Vec2 {
-      x: window_width / Self::UNITS_PER_SCREEN_WIDTH,
-      y: window_height / Self::UNITS_PER_SCREEN_HEIGHT,
+      x: window_width / Self::units_per_screen_width(aspect_ratio),
+      y: window_height / Self::units_per_screen_height(aspect_ratio),
     }
   }
 
-  pub fn to_x(self, win_info: &WinInfo) -> f32 {
-    self.0 * Self::scale(win_info).x
+  pub const fn to_x(self, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> f32 {
+    self.0 * Self::scale(win_info, aspect_ratio).x
   }
 
-  pub fn to_y(self, win_info: &WinInfo) -> f32 {
-    self.0 * Self::scale(win_info).y
+  pub const fn to_y(self, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> f32 {
+    self.0 * Self::scale(win_info, aspect_ratio).y
   }
 
   pub const fn to_untyped(self) -> f32 {
@@ -165,10 +192,10 @@ impl WorldVec2 {
     Self { x, y }
   }
 
-  pub const fn new_normalized(x: f32, y: f32) -> Self {
+  pub const fn new_normalized(x: f32, y: f32, aspect_ratio: &AspectRatio) -> Self {
     Self {
-      x: WorldUnit::normalized_x(x),
-      y: WorldUnit::normalized_y(y),
+      x: WorldUnit::normalized_x(x, aspect_ratio),
+      y: WorldUnit::normalized_y(y, aspect_ratio),
     }
   }
 
@@ -183,8 +210,8 @@ impl WorldVec2 {
     }
   }
 
-  pub fn to_absolute(self, win_info: &WinInfo) -> Vec2 {
-    Vec2 { x: self.x.0, y: self.y.0 } * WorldUnit::scale(win_info)
+  pub fn to_absolute(self, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Vec2 {
+    Vec2 { x: self.x.0, y: self.y.0 } * WorldUnit::scale(win_info, aspect_ratio)
   }
 
   pub fn length_squared(self) -> f32 {
