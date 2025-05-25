@@ -254,6 +254,14 @@ impl WorldVec2 {
     Vec2 { x: self.x.0, y: self.y.0 } * WorldUnit::scale(win_info, aspect_ratio)
   }
 
+  /// Returns a Vec2 with x and y ranging between `(-1.)..(1.)`.
+  pub fn screen_normalized(self, aspect_ratio: &AspectRatio) -> Vec2 {
+    Vec2 {
+      x: 2. * self.x.to_untyped() / WorldUnit::units_per_screen_width(aspect_ratio),
+      y: 2. * self.y.to_untyped() / WorldUnit::units_per_screen_height(aspect_ratio),
+    }
+  }
+
   pub fn length_squared(self) -> f32 {
     self.x.0 * self.x.0 + self.y.0 * self.y.0
   }
