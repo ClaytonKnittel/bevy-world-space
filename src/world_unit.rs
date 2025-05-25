@@ -101,6 +101,14 @@ impl WorldUnit {
     self.0 * Self::scale(win_info, aspect_ratio).y
   }
 
+  pub const fn from_x(x: f32, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+    Self(x / Self::scale(win_info, aspect_ratio).x)
+  }
+
+  pub const fn from_y(y: f32, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+    Self(y / Self::scale(win_info, aspect_ratio).y)
+  }
+
   pub const fn to_untyped(self) -> f32 {
     self.0
   }
@@ -196,6 +204,13 @@ impl WorldVec2 {
     Self {
       x: WorldUnit::normalized_x(x, aspect_ratio),
       y: WorldUnit::normalized_y(y, aspect_ratio),
+    }
+  }
+
+  pub const fn from_screen_pos(pos: Vec2, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+    Self {
+      x: WorldUnit::from_x(pos.x, &win_info, &aspect_ratio),
+      y: WorldUnit::from_y(pos.y, &win_info, &aspect_ratio),
     }
   }
 
