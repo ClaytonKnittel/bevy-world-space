@@ -13,7 +13,7 @@ use crate::{
   world_unit::{AspectRatio, WorldUnit, WorldVec2},
 };
 
-#[derive(Component, Default)]
+#[derive(Clone, Component, Default)]
 #[require(Transform)]
 pub struct Position {
   /// The position of the center of this entity, where (0, 0) is the center of the screen.
