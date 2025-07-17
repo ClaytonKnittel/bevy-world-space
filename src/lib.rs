@@ -2,6 +2,7 @@ use bevy::app::plugin_group;
 
 pub mod mouse;
 pub mod position;
+pub mod rect;
 pub mod win_info;
 pub mod world_init;
 pub mod world_unit;

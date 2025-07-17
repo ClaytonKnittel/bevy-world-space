@@ -285,6 +285,20 @@ impl WorldVec2 {
   pub fn dot(self, other: Self) -> f32 {
     self.x.0 * other.x.0 + self.y.0 * other.y.0
   }
+
+  pub fn min(self, other: Self) -> Self {
+    Self {
+      x: self.x.min(other.x),
+      y: self.y.min(other.y),
+    }
+  }
+
+  pub fn max(self, other: Self) -> Self {
+    Self {
+      x: self.x.max(other.x),
+      y: self.y.max(other.y),
+    }
+  }
 }
 
 impl Add for WorldVec2 {
@@ -331,6 +345,14 @@ impl Neg for WorldVec2 {
 
   fn neg(self) -> Self::Output {
     Self { x: -self.x, y: -self.y }
+  }
+}
+
+impl Div<f32> for WorldVec2 {
+  type Output = Self;
+
+  fn div(self, rhs: f32) -> Self {
+    Self { x: self.x / rhs, y: self.y / rhs }
   }
 }
 
