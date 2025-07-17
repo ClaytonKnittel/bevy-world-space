@@ -1,5 +1,6 @@
 use crate::world_unit::{WorldUnit, WorldVec2};
 
+#[derive(Clone)]
 pub struct WorldRect {
   /// The minimum corner point of the rect.
   min: WorldVec2,
