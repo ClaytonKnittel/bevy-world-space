@@ -128,7 +128,11 @@ impl WorldUnit {
     Self(y / Self::scale(win_info, aspect_ratio).y)
   }
 
-  pub const fn from_pixels(pixels: f32, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+  pub fn from_pixels(pixels: f32, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Self {
+    debug_assert_eq!(
+      Self::from_x(pixels, win_info, aspect_ratio),
+      Self::from_y(pixels, win_info, aspect_ratio)
+    );
     Self::from_x(pixels, win_info, aspect_ratio)
   }
 
