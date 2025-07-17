@@ -57,6 +57,10 @@ impl WorldUnit {
   pub const ZERO: Self = Self(0.);
   pub const ONE: Self = Self(1.);
 
+  pub const fn new(units: f32) -> Self {
+    Self(units)
+  }
+
   const fn units_per_screen_width(AspectRatio(aspect_ratio): &AspectRatio) -> f32 {
     Self::UNITS_PER_SCREEN_MAX / aspect_ratio.max(1.)
   }
