@@ -9,10 +9,7 @@ use bevy::{
   window::{PrimaryWindow, Window},
 };
 
-use crate::{
-  win_info::WinInfo,
-  world_unit::{AspectRatio, WorldVec2},
-};
+use crate::{win_info::WinInfo, world_unit::WorldVec2};
 
 #[derive(Event)]
 pub enum MouseEvent {
@@ -26,7 +23,6 @@ pub(crate) struct MousePlugin;
 impl MousePlugin {
   fn handle_input(
     win_info: Res<WinInfo>,
-    aspect_ratio: Res<AspectRatio>,
     mut mouse_events: EventWriter<MouseEvent>,
     buttons: Res<ButtonInput<MouseButton>>,
     window: Single<&Window, With<PrimaryWindow>>,
@@ -35,7 +31,7 @@ impl MousePlugin {
       return;
     };
 
-    let pos = WorldVec2::from_window_screen_pos(cursor_pos, &win_info, &aspect_ratio);
+    let pos = WorldVec2::from_window_screen_pos(cursor_pos, &win_info);
     if buttons.just_pressed(MouseButton::Left) {
       mouse_events.send(MouseEvent::LeftClick(pos));
     }

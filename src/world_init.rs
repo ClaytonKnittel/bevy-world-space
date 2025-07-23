@@ -14,7 +14,7 @@ use bevy::{
   window::WindowResized,
 };
 
-use crate::{win_info::WinInfo, world_unit::AspectRatio};
+use crate::win_info::WinInfo;
 
 pub struct WorldInitPlugin {
   pub screen_width: f32,
@@ -47,8 +47,8 @@ impl WorldInitPlugin {
 
   fn resize_listener(mut resize_events: EventReader<WindowResized>, mut win_info: ResMut<WinInfo>) {
     for e in resize_events.read() {
-      win_info.width = e.width;
-      win_info.height = e.height;
+      win_info.set_width(e.width);
+      win_info.set_height(e.height);
     }
   }
 }
@@ -57,7 +57,6 @@ impl Plugin for WorldInitPlugin {
   fn build(&self, app: &mut App) {
     app
       .insert_resource(WinInfo::new(self.screen_width, self.screen_height))
-      .insert_resource(AspectRatio::new(self.screen_height / self.screen_width))
       .add_systems(Startup, Self::world_init)
       .add_systems(PreUpdate, (Self::app_exit_listener, Self::resize_listener));
   }

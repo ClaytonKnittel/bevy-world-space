@@ -2,7 +2,7 @@ use bevy::math::Rect;
 
 use crate::{
   win_info::WinInfo,
-  world_unit::{AspectRatio, WorldUnit, WorldVec2},
+  world_unit::{WorldUnit, WorldVec2},
 };
 
 #[derive(Clone)]
@@ -62,10 +62,10 @@ impl WorldRect {
     self.min.x <= point.x && self.min.y <= point.y && self.max.x >= point.x && self.max.y >= point.y
   }
 
-  pub fn to_rect(&self, win_info: &WinInfo, aspect_ratio: &AspectRatio) -> Rect {
+  pub fn to_rect(&self, win_info: &WinInfo) -> Rect {
     Rect::from_corners(
-      self.min.to_absolute(win_info, aspect_ratio),
-      self.max.to_absolute(win_info, aspect_ratio),
+      self.min.to_absolute(win_info),
+      self.max.to_absolute(win_info),
     )
   }
 }
