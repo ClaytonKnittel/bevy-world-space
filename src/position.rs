@@ -1,5 +1,5 @@
 use bevy::{
-  app::{App, Plugin, Update},
+  app::{App, Plugin, PostUpdate},
   ecs::{
     component::Component,
     system::{Query, Res},
@@ -60,6 +60,6 @@ impl PositionPlugin {
 
 impl Plugin for PositionPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(Update, PositionPlugin::sync_render_positions);
+    app.add_systems(PostUpdate, PositionPlugin::sync_render_positions);
   }
 }
