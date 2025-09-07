@@ -40,7 +40,7 @@ impl Debug for WorldUnit {
 }
 
 impl WorldUnit {
-  const UNITS_PER_SCREEN_MAX: f32 = 50.;
+  pub(crate) const UNITS_PER_SCREEN_MAX: f32 = 50.;
 
   pub const ZERO: Self = Self(0.);
   pub const ONE: Self = Self(1.);

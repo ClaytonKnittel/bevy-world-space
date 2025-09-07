@@ -1,5 +1,7 @@
 use bevy::app::plugin_group;
 
+#[cfg(feature = "gridlines")]
+pub mod gridlines;
 pub mod mouse;
 pub mod position;
 pub mod rect;
@@ -12,5 +14,7 @@ plugin_group! {
     mouse:::MousePlugin,
     position:::PositionPlugin,
     world_init:::WorldInitPlugin,
+    #[cfg(feature = "gridlines")]
+    gridlines:::GridlinesPlugin,
   }
 }
